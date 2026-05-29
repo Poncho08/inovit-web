@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Inovit � Agencia de servicios digitales con IA. CRMs a medida, páginas web y automatizaciones para empresas en México.">
+<title>Inovit � Servicios Digitales con IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #090807;
+  --bg-2:      #100E0C;
+  --bg-3:      #181411;
+  --ink:       #F2EDE8;
+  --ink-soft:  #C8BFB8;
+  --mute:      rgba(242,237,232,0.38);
+  --mute2:     rgba(242,237,232,0.62);
+  --terra:     #C4522A;
+  --terra-2:   #E06840;
+  --wine:      #7A2233;
+  --wine-2:    #9C2D45;
+  --amber:     #D4883A;
+  --g1:        #C4522A;
+  --g2:        #D4883A;
+  --g3:        #7A2233;
+  --line:      rgba(242,237,232,0.07);
+  --line2:     rgba(242,237,232,0.12);
+  --ease-out:  cubic-bezier(0.16,1,0.3,1);
+  --mono:      'JetBrains Mono', monospace;
+  --sans:      'Syne', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 15px;
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+::selection { background: var(--terra); color: #fff; }
+
+.cursor {
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9999;
+  mix-blend-mode: difference;
+  opacity: 0; transition: opacity .25s var(--ease-out);
+  display: none;
+}
+.cursor.is-ready { opacity: 1; }
+@media (hover: hover) and (pointer: fine) { .cursor { display: block; } }
+.cursor-dot {
+  position: fixed; top: 0; left: 0;
+  width: 6px; height: 6px; margin: -3px;
+  background: var(--ink); border-radius: 50%;
+  pointer-events: none; will-change: transform;
+}
+.cursor-ring {
+  position: fixed; top: 0; left: 0;
+  width: 36px; height: 36px; margin: -18px;
+  border: 1px solid var(--ink); border-radius: 50%;
+  pointer-events: none; will-change: transform;
+  transition: width .3s var(--ease-out), height .3s var(--ease-out), margin .3s var(--ease-out);
+}
+.cursor.is-interactive .cursor-ring { width: 56px; height: 56px; margin: -28px; }
+.has-cursor, .has-cursor a, .has-cursor button { cursor: none; }
+
+.mouse-gradient {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(circle 700px at var(--mx, 30%) var(--my, 40%),
+      rgba(196,82,42,0.14) 0%, transparent 65%),
+    radial-gradient(circle 500px at calc(100% - var(--mx,30%)) calc(100% - var(--my,40%)),
+      rgba(122,34,51,0.10) 0%, transparent 60%),
+    radial-gradient(circle 350px at 80% 15%, rgba(212,136,58,0.07) 0%, transparent 55%);
+  filter: blur(50px) saturate(130%);
+  pointer-events: none;
+}
+
+.grain {
+  position: fixed; inset: 0; z-index: 1;
+  opacity: 0.04; mix-blend-mode: overlay; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+
+.content { position: relative; z-index: 2; }
+
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.5rem 5vw;
+  border-bottom: 1px solid transparent;
+  transition: background .4s, border-color .4s, backdrop-filter .4s;
+}
+nav.scrolled {
+  background: rgba(9,8,7,0.88);
+  border-color: var(--line);
+  backdrop-filter: blur(18px);
+}
+.nav-logo {
+  font-family: var(--sans); font-weight: 800; font-size: 1.3rem;
+  letter-spacing: -0.03em; color: var(--ink); text-decoration: none;
+}
+.nav-logo span {
+  background: linear-gradient(90deg, var(--terra), var(--amber));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  color: var(--mute); text-decoration: none; font-size: 0.72rem;
+  letter-spacing: 0.1em; text-transform: uppercase; transition: color .2s;
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-cta {
+  font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.05em;
+  color: var(--ink); text-decoration: none;
+  border: 1px solid var(--line2); padding: 0.5rem 1.25rem; border-radius: 2px;
+  transition: border-color .2s, background .2s;
+}
+.nav-cta:hover { border-color: var(--terra); background: rgba(196,82,42,0.08); }
+
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: flex-start;
+  padding: 10rem 5vw 6rem;
+}
+.hero-kicker {
+  font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--mute); margin-bottom: 2.5rem;
+  display: flex; align-items: center; gap: 1rem;
+  opacity: 0; animation: fadeUp .8s .1s var(--ease-out) forwards;
+}
+.hero-kicker::before { content: ''; width: 28px; height: 1px; background: var(--mute); }
+.hero-kicker .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--terra); display: inline-block;
+  animation: pulse 2.5s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(196,82,42,0.4); }
+  50% { opacity: 0.7; transform: scale(0.85); box-shadow: 0 0 0 6px rgba(196,82,42,0); }
+}
+h1 {
+  font-family: var(--sans); font-weight: 800;
+  font-size: clamp(3.2rem, 9.5vw, 8rem);
+  line-height: 0.93; letter-spacing: -0.04em;
+  max-width: 13ch; margin-bottom: 2.5rem;
+  opacity: 0; animation: fadeUp .8s .2s var(--ease-out) forwards;
+}
+h1 .block-word {
+  display: inline-block;
+  background: var(--ink); color: var(--bg);
+  padding: 0.04em 0.18em;
+  transition: background .25s, color .25s;
+}
+h1 .block-word:hover { background: var(--terra); color: var(--ink); }
+h1 .accent-word {
+  background: linear-gradient(90deg, var(--terra), var(--amber));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero-sub {
+  font-size: 0.875rem; color: var(--mute2);
+  max-width: 44ch; line-height: 1.85;
+  margin-bottom: 3rem; font-weight: 400;
+  opacity: 0; animation: fadeUp .8s .35s var(--ease-out) forwards;
+}
+.hero-actions {
+  display: flex; gap: 1rem; flex-wrap: wrap;
+  opacity: 0; animation: fadeUp .8s .5s var(--ease-out) forwards;
+}
+.btn-primary {
+  font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em;
+  text-decoration: none; color: var(--ink); background: var(--terra);
+  padding: 0.875rem 2rem; border-radius: 2px;
+  transition: background .2s, transform .2s;
+  display: inline-flex; align-items: center; gap: 0.75rem;
+}
+.btn-primary:hover { background: var(--terra-2); transform: translateY(-2px); }
+.btn-ghost {
+  font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em;
+  text-decoration: none; color: var(--mute2);
+  border: 1px solid var(--line2); padding: 0.875rem 2rem; border-radius: 2px;
+  transition: border-color .2s, color .2s;
+  display: inline-flex; align-items: center; gap: 0.75rem;
+}
+.btn-ghost:hover { border-color: var(--terra); color: var(--ink); }
+.hero-metrics {
+  display: flex; gap: 4rem; margin-top: 6rem;
+  padding-top: 2.5rem; border-top: 1px solid var(--line);
+  opacity: 0; animation: fadeUp .8s .65s var(--ease-out) forwards;
+  flex-wrap: wrap;
+}
+.metric-num {
+  font-family: var(--sans); font-weight: 800;
+  font-size: 2.25rem; letter-spacing: -0.04em; line-height: 1;
+}
+.metric-num .unit {
+  background: linear-gradient(90deg, var(--terra), var(--amber));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.metric-label { font-size: 0.68rem; color: var(--mute); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.4rem; }
+
+section { padding: 7rem 5vw; }
+.section-tag {
+  font-size: 0.67rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--terra); margin-bottom: 1.25rem;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.section-tag::before { content: '//'; color: var(--mute); font-size: 0.8em; }
+h2 {
+  font-family: var(--sans); font-weight: 800;
+  font-size: clamp(2rem, 5.5vw, 4.5rem);
+  letter-spacing: -0.04em; line-height: 0.95; margin-bottom: 1.25rem;
+}
+h2 em { font-style: normal; color: var(--mute); }
+.section-sub {
+  font-size: 0.85rem; color: var(--mute2);
+  max-width: 44ch; line-height: 1.85; margin-bottom: 4rem; font-weight: 400;
+}
+hr.sep { border: none; border-top: 1px solid var(--line); margin: 0; }
+
+.services-list { display: flex; flex-direction: column; }
+.service-row {
+  display: grid; grid-template-columns: 3rem 1fr auto auto;
+  align-items: center; gap: 2rem;
+  padding: 1.75rem 0; border-bottom: 1px solid var(--line);
+  transition: padding-left .3s var(--ease-out); cursor: default;
+}
+.service-row:first-child { border-top: 1px solid var(--line); }
+.service-row:hover { padding-left: 1.25rem; }
+.service-row:hover .service-name { color: var(--ink); }
+.service-num { font-size: 0.68rem; color: var(--mute); letter-spacing: 0.1em; }
+.service-name {
+  font-family: var(--sans); font-weight: 700;
+  font-size: clamp(1.1rem, 2.5vw, 1.7rem);
+  letter-spacing: -0.02em; color: var(--mute2);
+  transition: color .2s;
+}
+.service-tag { font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mute); }
+.service-price { font-size: 0.72rem; color: var(--terra); letter-spacing: 0.04em; white-space: nowrap; }
+@media (max-width: 640px) {
+  .service-tag, .service-price { display: none; }
+  .service-row { grid-template-columns: 2.5rem 1fr; }
+}
+
+.nichos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1px; background: var(--line); }
+.nicho-card {
+  background: var(--bg); padding: 2rem;
+  transition: background .2s; position: relative; overflow: hidden;
+}
+.nicho-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--terra), var(--amber));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .35s var(--ease-out);
+}
+.nicho-card:hover { background: var(--bg-2); }
+.nicho-card:hover::before { transform: scaleX(1); }
+.nicho-emoji { font-size: 1.5rem; margin-bottom: 1rem; display: block; }
+.nicho-name { font-family: var(--sans); font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; }
+.nicho-sub { font-size: 0.7rem; color: var(--mute); letter-spacing: 0.04em; }
+
+.demos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.demo-card {
+  border: 1px solid var(--line2); padding: 2rem;
+  transition: all .25s; cursor: pointer; position: relative; overflow: hidden;
+  background: var(--bg-2);
+}
+.demo-card::after {
+  content: '→'; position: absolute; right: 2rem; bottom: 2rem;
+  font-size: 1.1rem; color: var(--mute); transition: transform .2s, color .2s;
+}
+.demo-card:hover { border-color: var(--terra); background: var(--bg-3); }
+.demo-card:hover::after { transform: translateX(5px); color: var(--terra); }
+.demo-icon { font-size: 2rem; margin-bottom: 1.25rem; display: block; }
+.demo-name { font-family: var(--sans); font-weight: 700; font-size: 1rem; margin-bottom: 0.4rem; }
+.demo-url { font-size: 0.68rem; color: var(--terra); letter-spacing: 0.04em; }
+
+.proceso-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: var(--line); }
+.proceso-step { background: var(--bg); padding: 2.5rem 2rem; transition: background .2s; }
+.proceso-step:hover { background: var(--bg-2); }
+.paso-num {
+  font-family: var(--sans); font-size: 4.5rem; font-weight: 800;
+  letter-spacing: -0.05em; line-height: 1;
+  color: rgba(196,82,42,0.12); margin-bottom: 1.5rem;
+}
+.paso-title { font-family: var(--sans); font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem; }
+.paso-desc { font-size: 0.78rem; color: var(--mute2); line-height: 1.8; }
+
+.marquee-wrap {
+  overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  padding: 1.25rem 0; background: var(--bg-2);
+}
+.marquee-track {
+  display: flex; gap: 3rem; white-space: nowrap;
+  animation: marquee 30s linear infinite;
+}
+.marquee-item {
+  font-family: var(--sans); font-weight: 700;
+  font-size: clamp(0.95rem, 2vw, 1.25rem); letter-spacing: -0.02em;
+  color: var(--mute); flex-shrink: 0;
+  display: flex; align-items: center; gap: 1.5rem;
+}
+.marquee-sep { color: var(--terra); font-size: 0.45em; }
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.cta-section {
+  padding: 8rem 5vw; text-align: center; position: relative; overflow: hidden;
+}
+.cta-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 55% 75% at 50% 105%, rgba(196,82,42,0.13) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-section h2 { font-size: clamp(2.5rem, 7vw, 6rem); max-width: 14ch; margin: 0 auto 1.5rem; }
+.cta-section p { color: var(--mute2); margin-bottom: 3rem; font-size: 0.85rem; max-width: 40ch; margin-left: auto; margin-right: auto; }
+.email-link {
+  display: inline-block; font-family: var(--sans); font-weight: 800;
+  font-size: clamp(1.25rem, 3vw, 2rem); letter-spacing: -0.03em;
+  color: var(--ink); text-decoration: none;
+  border-bottom: 2px solid var(--line2); padding-bottom: 0.25rem;
+  transition: color .2s, border-color .2s; position: relative;
+}
+.email-link::after {
+  content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--terra), var(--amber));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .4s var(--ease-out);
+}
+.email-link:hover { color: var(--terra); border-color: transparent; }
+.email-link:hover::after { transform: scaleX(1); }
+
+footer {
+  padding: 2.5rem 5vw; border-top: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+}
+.footer-logo { font-family: var(--sans); font-weight: 800; font-size: 1rem; }
+.footer-logo span {
+  background: linear-gradient(90deg, var(--terra), var(--amber));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+footer p { font-size: 0.68rem; color: var(--mute); letter-spacing: 0.06em; }
+.footer-links { display: flex; gap: 2rem; }
+.footer-links a { font-size: 0.68rem; color: var(--mute); text-decoration: none; letter-spacing: 0.08em; text-transform: uppercase; transition: color .2s; }
+.footer-links a:hover { color: var(--ink); }
+
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s var(--ease-out), transform .7s var(--ease-out); }
+.reveal.visible { opacity: 1; transform: none; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .nav-links { display: none; }
+  .hero-metrics { gap: 2rem; }
+  .cta-section { padding: 5rem 5vw; }
+  footer { flex-direction: column; text-align: center; }
+  .footer-links { justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" data-cursor-root>
+  <span class="cursor-dot"></span>
+  <span class="cursor-ring"></span>
+</div>
+<div class="mouse-gradient" id="mouseGrad"></div>
+<div class="grain"></div>
+
+<nav id="nav">
+  <a href="#" class="nav-logo">Ino<span>vit</span></a>
+  <ul class="nav-links">
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#nichos">Nichos</a></li>
+    <li><a href="#demos">Demos</a></li>
+    <li><a href="#proceso">Proceso</a></li>
+  </ul>
+  <a href="#contacto" class="nav-cta">Contactar →</a>
+</nav>
+
+<div class="content">
+
+<section class="hero" id="inicio">
+  <p class="hero-kicker"><span class="dot"></span>Agencia Digital · Guadalajara, México</p>
+  <h1>Tu negocio<br>merece ser<br><span class="block-word">digital</span><br><span class="accent-word">ahora.</span></h1>
+  <p class="hero-sub">Construimos CRMs a medida, páginas web y soluciones con IA para empresas en México. Sin esperas, sin plantillas, sin excusas.</p>
+  <div class="hero-actions">
+    <a href="#demos" class="btn-primary">Ver demos en vivo →</a>
+    <a href="#servicios" class="btn-ghost">Explorar servicios</a>
+  </div>
+  <div class="hero-metrics">
+    <div>
+      <div class="metric-num">4<span class="unit">+</span></div>
+      <div class="metric-label">Nichos especializados</div>
+    </div>
+    <div>
+      <div class="metric-num">48<span class="unit">h</span></div>
+      <div class="metric-label">Entrega promedio</div>
+    </div>
+    <div>
+      <div class="metric-num">100<span class="unit">%</span></div>
+      <div class="metric-label">Hecho a medida</div>
+    </div>
+    <div>
+      <div class="metric-num">$0<span class="unit">*</span></div>
+      <div class="metric-label">Plantillas genéricas</div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="marquee-item">CRM a medida <span class="marquee-sep">◆</span></span>
+    <span class="marquee-item">Páginas web <span class="marquee-sep">◆</span></span>
+    <span class="marquee-item">Soluciones con IA <span class="marquee-sep">◆</span></span>
+    <span class="marquee-item">Guadalajara <span class="marquee-sep">◆</span></span>
+    <span class="marquee-item">Pátzcuaro <span class="marquee-sep">◆</span></span>
+    <span class="marquee-item">inovit.mx <span class="marquee-sep">◆</span></span>
+    <span class="marquee-item">CRM a medida <span class="marquee-sep">◆</span></span>
+    <span class="marquee-item">Páginas web <span class="marquee-sep">◆</span></span>
+    <span class="marquee-item">Soluciones con IA <span class="marquee-sep">◆</span></span>
+    <span class="marquee-item">Guadalajara <span class="marquee-sep">◆</span></span>
+    <span class="marquee-item">Pátzcuaro <span class="marquee-sep">◆</span></span>
+    <span class="marquee-item">inovit.mx <span class="marquee-sep">◆</span></span>
+  </div>
+</div>
+
+<hr class="sep">
+
+<section id="servicios">
+  <div class="reveal">
+    <div class="section-tag">Lo que hacemos</div>
+    <h2>Servicios que<br><em>mueven negocios</em></h2>
+    <p class="section-sub">No vendemos plantillas. Cada proyecto es una solución construida desde cero para tu proceso específico.</p>
+  </div>
+  <div class="services-list reveal">
+    <div class="service-row">
+      <span class="service-num">01</span>
+      <span class="service-name">CRM a medida</span>
+      <span class="service-tag">Desarrollo</span>
+      <span class="service-price">Desde $15,000 MXN</span>
+    </div>
+    <div class="service-row">
+      <span class="service-num">02</span>
+      <span class="service-name">Páginas web</span>
+      <span class="service-tag">Diseño + Dev</span>
+      <span class="service-price">Desde $8,000 MXN</span>
+    </div>
+    <div class="service-row">
+      <span class="service-num">03</span>
+      <span class="service-name">Soluciones con IA</span>
+      <span class="service-tag">Automatización</span>
+      <span class="service-price">Desde $12,000 MXN</span>
+    </div>
+    <div class="service-row">
+      <span class="service-num">04</span>
+      <span class="service-name">Mantenimiento digital</span>
+      <span class="service-tag">Soporte</span>
+      <span class="service-price">Desde $1,500 MXN/mes</span>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<section id="nichos">
+  <div class="reveal">
+    <div class="section-tag">Para quién</div>
+    <h2>Especialistas<br><em>en tu industria</em></h2>
+    <p class="section-sub">No explicamos tecnología — entendemos tu negocio y construimos para tu proceso exacto.</p>
+  </div>
+  <div class="nichos-grid reveal">
+    <div class="nicho-card"><span class="nicho-emoji">🦷</span><div class="nicho-name">Clínicas dentales</div><div class="nicho-sub">Pacientes, citas y presupuestos</div></div>
+    <div class="nicho-card"><span class="nicho-emoji">📣</span><div class="nicho-name">Agencias de marketing</div><div class="nicho-sub">Clientes, campañas y KPIs</div></div>
+    <div class="nicho-card"><span class="nicho-emoji">🤝</span><div class="nicho-name">Coaches y consultores</div><div class="nicho-sub">Prospectos, sesiones y pagos</div></div>
+    <div class="nicho-card"><span class="nicho-emoji">✂️</span><div class="nicho-name">Salones de belleza</div><div class="nicho-sub">Citas, clientas y servicios</div></div>
+    <div class="nicho-card"><span class="nicho-emoji">🏠</span><div class="nicho-name">Inmobiliarias</div><div class="nicho-sub">Propiedades, leads y cierres</div></div>
+    <div class="nicho-card"><span class="nicho-emoji">📚</span><div class="nicho-name">Academias</div><div class="nicho-sub">Alumnos, inscripciones y pagos</div></div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<section id="demos">
+  <div class="reveal">
+    <div class="section-tag">Demos en vivo</div>
+    <h2>Pruébalo antes<br><em>de comprarlo</em></h2>
+    <p class="section-sub">Cada demo es un CRM funcional real — no mockups, no videos. Entra y úsalo ahora mismo.</p>
+  </div>
+  <div class="demos-grid reveal">
+    <div class="demo-card"><span class="demo-icon">🦷</span><div class="demo-name">Demo Clínica Dental</div><div class="demo-url">demo-dental.inovit.mx</div></div>
+    <div class="demo-card"><span class="demo-icon">📣</span><div class="demo-name">Demo Agencia Marketing</div><div class="demo-url">demo-marketing.inovit.mx</div></div>
+    <div class="demo-card"><span class="demo-icon">🤝</span><div class="demo-name">Demo Coach / Consultor</div><div class="demo-url">demo-coach.inovit.mx</div></div>
+    <div class="demo-card"><span class="demo-icon">✂️</span><div class="demo-name">Demo Salón de Belleza</div><div class="demo-url">demo-salon.inovit.mx</div></div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<section id="proceso">
+  <div class="reveal">
+    <div class="section-tag">Cómo funciona</div>
+    <h2>De la idea a tu<br><em>herramienta en días</em></h2>
+    <p class="section-sub">Sin reuniones interminables ni meses de espera.</p>
+  </div>
+  <div class="proceso-grid reveal">
+    <div class="proceso-step">
+      <div class="paso-num">01</div>
+      <div class="paso-title">Ves el demo</div>
+      <div class="paso-desc">Entras al demo de tu nicho, lo pruebas y decides. Sin reunión previa, sin compromiso.</div>
+    </div>
+    <div class="proceso-step">
+      <div class="paso-num">02</div>
+      <div class="paso-title">Firmamos y pagamos</div>
+      <div class="paso-desc">Contrato simple, 50% de anticipo. Arrancamos ese mismo día sin burocracia.</div>
+    </div>
+    <div class="proceso-step">
+      <div class="paso-num">03</div>
+      <div class="paso-title">Personalizamos</div>
+      <div class="paso-desc">Logo, colores y funcionalidades a tu marca. Tu herramienta lista en 48 horas.</div>
+    </div>
+    <div class="proceso-step">
+      <div class="paso-num">04</div>
+      <div class="paso-title">Te acompañamos</div>
+      <div class="paso-desc">Mantenimiento mensual: actualizaciones, soporte y mejoras continuas incluidas.</div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section" id="contacto">
+  <div class="cta-bg"></div>
+  <div class="reveal">
+    <div class="section-tag" style="justify-content:center">¿Listo para empezar?</div>
+    <h2>Tu negocio merece herramientas <em>a su altura</em></h2>
+    <p>Escríbenos y te mostramos el demo de tu nicho en vivo — sin costo, sin compromiso.</p>
+    <a href="mailto:hola@inovit.mx" class="email-link">hola@inovit.mx</a>
+    <div style="margin-top:3rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <a href="https://wa.me/52TUNUMERO" class="btn-primary">WhatsApp →</a>
+      <a href="#demos" class="btn-ghost">Ver demos primero</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Ino<span>vit</span></div>
+  <div class="footer-links">
+    <a href="#servicios">Servicios</a>
+    <a href="#demos">Demos</a>
+    <a href="#contacto">Contacto</a>
+  </div>
+  <p>© 2025 Inovit · inovit.mx · Guadalajara, México</p>
+</footer>
+
+</div>
+
+<script defer>
+(function () {
+  "use strict";
+
+  function initNav() {
+    var nav = document.getElementById('nav');
+    if (!nav) return;
+    window.addEventListener('scroll', function () {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+  }
+
+  function initMouseGradient() {
+    var mx = 30, my = 40;
+    window.addEventListener('mousemove', function (e) {
+      var x = (e.clientX / window.innerWidth) * 100;
+      var y = (e.clientY / window.innerHeight) * 100;
+      mx += (x - mx) * 0.055;
+      my += (y - my) * 0.055;
+      document.documentElement.style.setProperty('--mx', mx.toFixed(1) + '%');
+      document.documentElement.style.setProperty('--my', my.toFixed(1) + '%');
+    }, { passive: true });
+  }
+
+  function initCursor() {
+    var root = document.querySelector('[data-cursor-root]');
+    if (!root || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    document.documentElement.classList.add('has-cursor');
+    var ring = root.querySelector('.cursor-ring');
+    var dot = root.querySelector('.cursor-dot');
+    var tx = 0, ty = 0, rx = 0, ry = 0, firstMove = false;
+    window.addEventListener('mousemove', function (e) {
+      tx = e.clientX; ty = e.clientY;
+      if (dot) dot.style.transform = 'translate3d(' + tx + 'px,' + ty + 'px,0)';
+      if (!firstMove) { firstMove = true; rx = tx; ry = ty; root.classList.add('is-ready'); }
+    }, { passive: true });
+    (function raf() {
+      rx += (tx - rx) * 0.12; ry += (ty - ry) * 0.12;
+      if (ring) ring.style.transform = 'translate3d(' + rx.toFixed(1) + 'px,' + ry.toFixed(1) + 'px,0)';
+      requestAnimationFrame(raf);
+    })();
+    document.querySelectorAll('a, button, .demo-card, .service-row, .nicho-card, .proceso-step').forEach(function (el) {
+      el.addEventListener('mouseenter', function () { root.classList.add('is-interactive'); });
+      el.addEventListener('mouseleave', function () { root.classList.remove('is-interactive'); });
+    });
+  }
+
+  function initReveal() {
+    var els = document.querySelectorAll('.reveal');
+    var seen = new WeakSet();
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting && !seen.has(e.target)) {
+          seen.add(e.target); e.target.classList.add('visible'); io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.05 });
+    els.forEach(function (el) { io.observe(el); });
+    setTimeout(function () { els.forEach(function (el) { el.classList.add('visible'); }); }, 6000);
+  }
+
+  function safe(fn, n) { try { fn(); } catch(e) { console.warn('[Inovit]', n, e); } }
+  safe(initNav, 'nav');
+  safe(initMouseGradient, 'gradient');
+  safe(initCursor, 'cursor');
+  safe(initReveal, 'reveal');
+})();
+</script>
+</body>
+</html>
