@@ -9,23 +9,24 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:        #090807;
-  --bg-2:      #100E0C;
-  --bg-3:      #181411;
-  --ink:       #F2EDE8;
-  --ink-soft:  #C8BFB8;
-  --mute:      rgba(242,237,232,0.38);
-  --mute2:     rgba(242,237,232,0.62);
-  --terra:     #C4522A;
-  --terra-2:   #E06840;
-  --wine:      #7A2233;
-  --wine-2:    #9C2D45;
-  --amber:     #D4883A;
-  --g1:        #C4522A;
-  --g2:        #D4883A;
-  --g3:        #7A2233;
-  --line:      rgba(242,237,232,0.07);
-  --line2:     rgba(242,237,232,0.12);
+  --bg:        #FFFFFF;
+  --bg-2:      #F8F8F8;
+  --bg-3:      #F2F2F2;
+  --ink:       #1A1A1A;
+  --ink-soft:  #4A4A4A;
+  --mute:      rgba(26,26,26,0.40);
+  --mute2:     rgba(26,26,26,0.65);
+  --terra:     #4A7AB0;
+  --terra-2:   #3A6A9E;
+  --wine:      #2D5A8E;
+  --wine-2:    #3A6A9E;
+  --amber:     #6B9CC4;
+  --g1:        #4A7AB0;
+  --g2:        #6B9CC4;
+  --g3:        #2D5A8E;
+  --accent-lt: #EBF2FA;
+  --line:      rgba(26,26,26,0.08);
+  --line2:     rgba(26,26,26,0.14);
   --ease-out:  cubic-bezier(0.16,1,0.3,1);
   --mono:      'JetBrains Mono', monospace;
   --sans:      'Syne', sans-serif;
@@ -45,7 +46,7 @@ body {
 .cursor {
   position: fixed; top: 0; left: 0;
   pointer-events: none; z-index: 9999;
-  mix-blend-mode: difference;
+  mix-blend-mode: normal;
   opacity: 0; transition: opacity .25s var(--ease-out);
   display: none;
 }
@@ -54,13 +55,13 @@ body {
 .cursor-dot {
   position: fixed; top: 0; left: 0;
   width: 6px; height: 6px; margin: -3px;
-  background: var(--ink); border-radius: 50%;
+  background: var(--terra); border-radius: 50%;
   pointer-events: none; will-change: transform;
 }
 .cursor-ring {
   position: fixed; top: 0; left: 0;
   width: 36px; height: 36px; margin: -18px;
-  border: 1px solid var(--ink); border-radius: 50%;
+  border: 1.5px solid var(--terra); border-radius: 50%;
   pointer-events: none; will-change: transform;
   transition: width .3s var(--ease-out), height .3s var(--ease-out), margin .3s var(--ease-out);
 }
@@ -70,18 +71,18 @@ body {
 .mouse-gradient {
   position: fixed; inset: 0; z-index: 0;
   background:
-    radial-gradient(circle 700px at var(--mx, 30%) var(--my, 40%),
-      rgba(196,82,42,0.14) 0%, transparent 65%),
-    radial-gradient(circle 500px at calc(100% - var(--mx,30%)) calc(100% - var(--my,40%)),
-      rgba(122,34,51,0.10) 0%, transparent 60%),
-    radial-gradient(circle 350px at 80% 15%, rgba(212,136,58,0.07) 0%, transparent 55%);
-  filter: blur(50px) saturate(130%);
+    radial-gradient(circle 600px at var(--mx, 30%) var(--my, 40%),
+      rgba(74,122,176,0.07) 0%, transparent 65%),
+    radial-gradient(circle 400px at calc(100% - var(--mx,30%)) calc(100% - var(--my,40%)),
+      rgba(107,156,196,0.05) 0%, transparent 60%),
+    radial-gradient(circle 300px at 80% 15%, rgba(74,122,176,0.04) 0%, transparent 55%);
+  filter: blur(60px) saturate(120%);
   pointer-events: none;
 }
 
 .grain {
   position: fixed; inset: 0; z-index: 1;
-  opacity: 0.04; mix-blend-mode: overlay; pointer-events: none;
+  opacity: 0.02; mix-blend-mode: overlay; pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 200px;
 }
@@ -96,9 +97,10 @@ nav {
   transition: background .4s, border-color .4s, backdrop-filter .4s;
 }
 nav.scrolled {
-  background: rgba(9,8,7,0.88);
+  background: rgba(255,255,255,0.92);
   border-color: var(--line);
   backdrop-filter: blur(18px);
+  box-shadow: 0 1px 24px rgba(26,26,26,0.06);
 }
 .nav-logo {
   font-family: var(--sans); font-weight: 800; font-size: 1.3rem;
@@ -141,8 +143,8 @@ nav.scrolled {
   animation: pulse 2.5s infinite;
 }
 @keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(196,82,42,0.4); }
-  50% { opacity: 0.7; transform: scale(0.85); box-shadow: 0 0 0 6px rgba(196,82,42,0); }
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(74,122,176,0.4); }
+  50% { opacity: 0.7; transform: scale(0.85); box-shadow: 0 0 0 6px rgba(74,122,176,0); }
 }
 h1 {
   font-family: var(--sans); font-weight: 800;
@@ -242,6 +244,24 @@ hr.sep { border: none; border-top: 1px solid var(--line); margin: 0; }
 }
 .service-tag { font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mute); }
 .service-price { font-size: 0.72rem; color: var(--terra); letter-spacing: 0.04em; white-space: nowrap; }
+.service-row--product {
+  background: var(--accent-lt);
+  border-radius: 6px;
+  border-top: 1px solid rgba(74,122,176,0.18) !important;
+  border-bottom: 1px solid rgba(74,122,176,0.18) !important;
+  padding-left: 1rem;
+  margin-top: 0.5rem;
+}
+.service-row--product .service-name { color: var(--ink); }
+.service-product-badge {
+  font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.1em;
+  text-transform: uppercase; background: var(--terra); color: #fff;
+  padding: 0.18em 0.55em; border-radius: 3px;
+  margin-left: 0.65rem; vertical-align: middle; position: relative; top: -1px;
+}
+.service-desc {
+  font-size: 0.7rem; color: var(--mute); margin-top: 0.2rem; font-weight: 400;
+}
 @media (max-width: 640px) {
   .service-tag, .service-price { display: none; }
   .service-row { grid-template-columns: 2.5rem 1fr; }
@@ -286,7 +306,7 @@ hr.sep { border: none; border-top: 1px solid var(--line); margin: 0; }
 .paso-num {
   font-family: var(--sans); font-size: 4.5rem; font-weight: 800;
   letter-spacing: -0.05em; line-height: 1;
-  color: rgba(196,82,42,0.12); margin-bottom: 1.5rem;
+  color: rgba(74,122,176,0.15); margin-bottom: 1.5rem;
 }
 .paso-title { font-family: var(--sans); font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem; }
 .paso-desc { font-size: 0.78rem; color: var(--mute2); line-height: 1.8; }
@@ -316,7 +336,7 @@ hr.sep { border: none; border-top: 1px solid var(--line); margin: 0; }
 }
 .cta-bg {
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse 55% 75% at 50% 105%, rgba(196,82,42,0.13) 0%, transparent 70%);
+  background: radial-gradient(ellipse 55% 75% at 50% 105%, rgba(74,122,176,0.08) 0%, transparent 70%);
   pointer-events: none;
 }
 .cta-section h2 { font-size: clamp(2.5rem, 7vw, 6rem); max-width: 14ch; margin: 0 auto 1.5rem; }
@@ -422,12 +442,14 @@ footer p { font-size: 0.68rem; color: var(--mute); letter-spacing: 0.06em; }
   <div class="marquee-track">
     <span class="marquee-item">CRM a medida <span class="marquee-sep">◆</span></span>
     <span class="marquee-item">Páginas web <span class="marquee-sep">◆</span></span>
+    <span class="marquee-item">AgendaMed <span class="marquee-sep">◆</span></span>
     <span class="marquee-item">Soluciones con IA <span class="marquee-sep">◆</span></span>
     <span class="marquee-item">Guadalajara <span class="marquee-sep">◆</span></span>
     <span class="marquee-item">Pátzcuaro <span class="marquee-sep">◆</span></span>
     <span class="marquee-item">inovit.mx <span class="marquee-sep">◆</span></span>
     <span class="marquee-item">CRM a medida <span class="marquee-sep">◆</span></span>
     <span class="marquee-item">Páginas web <span class="marquee-sep">◆</span></span>
+    <span class="marquee-item">AgendaMed <span class="marquee-sep">◆</span></span>
     <span class="marquee-item">Soluciones con IA <span class="marquee-sep">◆</span></span>
     <span class="marquee-item">Guadalajara <span class="marquee-sep">◆</span></span>
     <span class="marquee-item">Pátzcuaro <span class="marquee-sep">◆</span></span>
@@ -467,6 +489,15 @@ footer p { font-size: 0.68rem; color: var(--mute); letter-spacing: 0.06em; }
       <span class="service-name">Mantenimiento digital</span>
       <span class="service-tag">Soporte</span>
       <span class="service-price">Desde $1,500 MXN/mes</span>
+    </div>
+    <div class="service-row service-row--product">
+      <span class="service-num">05</span>
+      <div>
+        <span class="service-name">AgendaMed <span class="service-product-badge">Producto Propio</span></span>
+        <div class="service-desc">CRM médico listo para usar: citas, pacientes, expedientes y recordatorios — sin configuración.</div>
+      </div>
+      <span class="service-tag">CRM Médico · SaaS</span>
+      <span class="service-price">Desde $800 MXN/mes</span>
     </div>
   </div>
 </section>
